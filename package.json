@@ -2,6 +2,7 @@
   "name": "slidev",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.11.0",
   "scripts": {
     "cleanup:dist": "rimraf --glob dist",
     "packages:build": "pnpm cleanup:dist && pnpm -r --filter=./packages/* run build",
