@@ -7,10 +7,15 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
+
+env:
+  STORE_PATH: ''
 
 jobs:
   build:
@@ -23,14 +28,28 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Setup @antfu/ni
-        run: npm i -g @antfu/ni
+      - uses: pnpm/action-setup@v2
+        with:
+          run_install: false
+
+      - name: Obtain pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Configure pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: nci
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: nr build --base /${{github.event.repository.name}}/
+        run: pnpm run packages:build-base
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -40,9 +59,6 @@ jobs:
           path: dist
 
   deploy:
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

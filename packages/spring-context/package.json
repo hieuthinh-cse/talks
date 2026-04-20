@@ -1,0 +1,17 @@
+{
+  "name": "spring-context",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "build-base": "slidev build --out ../../dist/spring-context --base /talks/spring-context/",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.14.2",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "vue": "^3.5.29"
+  }
+}
